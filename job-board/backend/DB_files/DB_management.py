@@ -3,9 +3,16 @@ from pymongo.server_api import ServerApi
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from bson.objectid import ObjectId
+from dotenv import load_dotenv
+import cohere
 
 app = Flask(__name__)
 CORS(app)
+
+load_dotenv()
+COHERE_API_KEY = 'ZMdG2s96ZPww62iO7GPOsgpEQxFax101dA0pBT45'
+
+co = cohere.Client(COHERE_API_KEY)
 
 uri = "mongodb+srv://mganesh2k:nvbXzxHGZevlXp78@ai-devhacks.0oywds7.mongodb.net/?retryWrites=true&w=majority&appName=AI-DevHacks"
 
@@ -90,14 +97,24 @@ def delete_candidate(id):
 @app.route('/add_job', methods=['POST'])
 def create_job():
     data = request.json
-    print("📥 New Job Posted:", data)
+    print(" New Job Posted:", data)
+    job_description = data.get('jobDescription', '')
+
+    cohere_response = co.chat(
+            message=f'Based on the following Job Description, categorise the required experience level into one of the following: Entry Level, Internship, Associate, Mid, Senior, Director, Executive. Give only the category name as output. Job Description: {job_description}',
+            model="command",
+            temperature=0.3
+        )
+    experience_level = cohere_response.text.strip()
+
+    data['experienceLevel'] = experience_level
 
     # Optional: Validate recruiterId is present
     if 'recruiterId' not in data:
         return jsonify({'error': 'Missing recruiterId'}), 400
 
     result = collection_job.insert_one(data)
-    return jsonify({'id': str(result.inserted_id)}), 201
+    return jsonify({'id': str(result.inserted_id), 'experienceLevel': experience_level}), 201
 
 
 # Read all candidates

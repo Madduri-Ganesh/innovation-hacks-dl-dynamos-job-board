@@ -63,7 +63,6 @@ const MyJobs = () => {
   ) : (
     <p>No jobs posted yet.</p>
   )}
-
       </div>
     </div>
   );

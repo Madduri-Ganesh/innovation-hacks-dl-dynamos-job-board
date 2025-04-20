@@ -41,10 +41,11 @@
   align-items: center; /* ✅ centers the job-card inside */
   gap: 20px;
   margin-top: 20px;
+  /* width: 100%; */
 }
 
 .job-card {
-  width: 90%; /* ✅ makes the card span 90% of container */
+  width: 90%; 
   background-color: #f9f9f9;
   border-radius: 12px;
   padding: 20px;
