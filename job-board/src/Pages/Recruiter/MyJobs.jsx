@@ -87,6 +87,7 @@ const MyJobs = () => {
     <p><strong>Skills:</strong> {job.skillsRequired || 'Not specified'}</p>
     <p><strong>Hiring Period:</strong> {job.hiring_period || 'Not mentioned'}</p>
     <p><strong>Date:</strong> {job.date}</p>
+    <p><strong>Experience Level:</strong> {job.experienceLevel || 'Not specified'}</p>
 
     {/* ✅ NEW: Show Job Status */}
     <p><strong>Status:</strong> {job.jobState}</p>
