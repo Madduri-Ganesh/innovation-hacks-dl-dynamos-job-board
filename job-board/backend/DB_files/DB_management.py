@@ -13,6 +13,17 @@ uri = "mongodb+srv://mganesh2k:nvbXzxHGZevlXp78@ai-devhacks.0oywds7.mongodb.net/
 client = MongoClient(uri, server_api=ServerApi('1'))
 db = client['customer_data']
 collection = db['customer_data']
+collection_job = db['job_details']
+
+
+@app.route('/get_recruiter', methods=['GET'])
+def get_recruiter():
+    recruiter = collection.find_one({"role": "Recruiter"})  # adjust field name if needed
+    if recruiter:
+        recruiter['_id'] = str(recruiter['_id'])
+        return jsonify(recruiter)
+    else:
+        return jsonify({"error": "No recruiter found"}), 404
 
 # Create (POST) - expects the specified payload
 @app.route('/candidates/add', methods=['POST'])
@@ -69,6 +80,64 @@ def delete_candidate(id):
         return jsonify({'message': 'Candidate deleted'})
     else:
         return jsonify({'error': 'Candidate not found'}), 404
+
+
+
+
+    # --------jobs--------------
+
+# Create (POST) - expects the specified payload
+@app.route('/add_job', methods=['POST'])
+def create_job():
+    data = request.json
+    print("📥 New Job Posted:", data)
+
+    # Optional: Validate recruiterId is present
+    if 'recruiterId' not in data:
+        return jsonify({'error': 'Missing recruiterId'}), 400
+
+    result = collection_job.insert_one(data)
+    return jsonify({'id': str(result.inserted_id)}), 201
+
+
+# Read all candidates
+@app.route('/show_jobs', methods=['GET'])
+def get_all_jobs():
+    candidates = []
+    for cand in collection_job.find():
+        cand['_id'] = str(cand['_id'])
+        candidates.append(cand)
+    return jsonify(candidates)
+
+# Read one candidate
+@app.route('/jobs/<id>', methods=['GET'])
+def get_job(id):
+    cand = collection_job.find_one({'_id': id})
+    if cand:
+        cand['_id'] = str(cand['_id'])
+        return jsonify(cand)
+    else:
+        return jsonify({'error': 'Candidate not found'}), 404
+
+# Update candidate
+@app.route('/jobs/<id>', methods=['PUT'])
+def update_job(id):
+    data = request.json
+    result = collection_job.update_one({'_id': (id)}, {'$set': data})
+    if result.matched_count:
+        return jsonify({'message': 'Candidate updated'})
+    else:
+        return jsonify({'error': 'Candidate not found'}), 404
+
+# Delete candidate
+@app.route('/jobs/<id>', methods=['DELETE'])
+def delete_job(id):
+    result = collection_job.delete_one({'_id': id})
+    if result.deleted_count:
+        return jsonify({'message': 'Candidate deleted'})
+    else:
+        return jsonify({'error': 'Candidate not found'}), 404
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
