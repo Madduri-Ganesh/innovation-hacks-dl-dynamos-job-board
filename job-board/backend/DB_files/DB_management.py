@@ -118,13 +118,64 @@ def create_job():
 
 
 # Read all candidates
+from datetime import datetime, timedelta
+
 @app.route('/show_jobs', methods=['GET'])
 def get_all_jobs():
     candidates = []
+    current_date = datetime.now()
+
     for cand in collection_job.find():
-        cand['_id'] = str(cand['_id'])
+        cand['_id'] = str(cand['_id'])  # convert _id for frontend
+
+        # Parse the posted date
+        try:
+            job_post_date = datetime.fromisoformat(cand['date'])
+        except Exception as e:
+            print(f"Date parsing error for job {cand.get('_id')}: {e}")
+            job_post_date = current_date  # fallback
+
+        hiring_period_weeks = int(cand.get('hiring_period', 0))
+        days_passed = (current_date - job_post_date).days
+
+        # Update jobState dynamically
+        new_state = 'Active' if days_passed <= hiring_period_weeks * 7 else 'Inactive'
+        
+        # if jobState in database is different, update it
+        if cand.get('jobState') != new_state:
+            collection_job.update_one(
+                {'_id': ObjectId(cand['_id'])},
+                {'$set': {'jobState': new_state}}
+            )
+            cand['jobState'] = new_state  # also update locally for frontend
+
         candidates.append(cand)
+
     return jsonify(candidates)
+
+@app.route('/jobs/<id>/reactivate', methods=['POST'])
+def reactivate_job(id):
+    try:
+        current_date = datetime.now()
+        result = collection_job.update_one(
+            {'_id': ObjectId(id)},
+            {
+                '$set': {
+                    'jobState': 'Active',
+                    'date': current_date.isoformat()
+                }
+            }
+        )
+
+        if result.matched_count:
+            updated_job = collection_job.find_one({'_id': ObjectId(id)})
+            updated_job['_id'] = str(updated_job['_id'])
+            return jsonify(updated_job)
+        else:
+            return jsonify({'error': 'Job not found'}), 404
+    except Exception as e:
+        print(f"Error in reactivating job: {e}")
+        return jsonify({'error': str(e)}), 500
 
 # Read one candidate
 @app.route('/jobs/<id>', methods=['GET'])
@@ -154,6 +205,8 @@ def delete_job(id):
         return jsonify({'message': 'Candidate deleted'})
     else:
         return jsonify({'error': 'Candidate not found'}), 404
+    
+    
     
 
 if __name__ == '__main__':

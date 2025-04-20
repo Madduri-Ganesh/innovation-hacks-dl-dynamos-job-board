@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './MyJobsForm.css';
 
-const MyJobsForm = ({ setShowForm, recruiterId }) => {
+const MyJobsForm = ({ setShowForm, recruiterId, refreshJobs }) => {
   const [formData, setFormData] = useState({
     companyName: '',
     jobPosting: '',
@@ -42,16 +42,17 @@ const MyJobsForm = ({ setShowForm, recruiterId }) => {
 
       const result = await response.json();
       if (response.ok) {
-        console.log('✅ Job added:', result);
+        console.log('Job added:', result);
         alert('Job successfully submitted!');
         setShowForm(false);
+        refreshJobs();
       } else {
-        console.error('❌ Failed:', result.error);
+        console.error('Failed:', result.error);
       }
     } catch (err) {
       console.error('Error submitting job:', err);
     }
-  };
+  }
   
 
   return (
