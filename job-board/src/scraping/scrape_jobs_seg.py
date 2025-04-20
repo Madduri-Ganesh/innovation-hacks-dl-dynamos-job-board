@@ -57,3 +57,4 @@ if __name__ == "__main__":
     company_emails = segregate_emails_by_company(input_file)
     print_company_emails(company_emails)
     save_company_emails(company_emails, output_file)
+    

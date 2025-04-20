@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { dummyData } from "../../dummy";
+import { final_email_data } from "../../data/final_email_data";
 import {
   VerticalTimeline,
   VerticalTimelineElement,
@@ -12,7 +12,7 @@ const CompanyDashboard = () => {
   const { companyName } = useParams();
   const navigate = useNavigate();
 
-  const companyData = dummyData[companyName];
+  const companyData = final_email_data[companyName];
 
   if (!companyData) {
     return (

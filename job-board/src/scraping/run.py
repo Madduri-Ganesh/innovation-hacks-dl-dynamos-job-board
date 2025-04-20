@@ -1,6 +1,7 @@
 import scrape
 import scrape_jobs
 import scrape_jobs_seg
+import convert_to_final_data
 
 def run_scrape():
     print("\nRunning scrape.py...\n" + "="*40)
@@ -17,6 +18,7 @@ def run_scrape_jobs_seg():
     company_emails = scrape_jobs_seg.segregate_emails_by_company(input_file)
     scrape_jobs_seg.print_company_emails(company_emails)
     scrape_jobs_seg.save_company_emails(company_emails, output_file)
+    convert_to_final_data.convert_to_final_data(output_file, "../data/final_email_data.js")
 
 def main():
     run_scrape()

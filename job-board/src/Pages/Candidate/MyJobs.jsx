@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { dummyData } from "../../dummy";
+import { final_email_data } from "../../data/final_email_data";
 import "./MyJobs.css"; // Import your CSS file
 
 const slugify = (text) => {
@@ -34,7 +34,7 @@ const MyJobsPage = () => {
   useEffect(() => {
     // Fake loading for 2 seconds
     setTimeout(() => {
-      setJobs(dummyData);
+      setJobs(final_email_data);
       setLoading(false);
     }, 2000);
   }, []);
@@ -49,7 +49,13 @@ const MyJobsPage = () => {
       <div className="jobs-list">
         {Object.keys(jobs).map((slug) => {
           const { companyName, updates } = jobs[slug];
-          const latest = updates[updates.length - 1];
+          // ✅ Sort updates by date (most recent last)
+          const sortedUpdates = updates
+            .slice()
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+          // ✅ Now pick the last item
+          const latest = sortedUpdates[sortedUpdates.length - 1];
           return (
             <div key={slug} className="job-card">
               <h2>{companyName}</h2>
