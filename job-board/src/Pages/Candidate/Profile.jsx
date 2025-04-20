@@ -1,26 +1,76 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Profile.css';
 
-const Profile = () => {
+const CandidateProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: 'Frank',
-    email: 'veryfranklee@gmail.com',
-    resume: '',
-    skills: 'Java, Python',
-    education: 'Bachelor of Science in Computer Science - XYZ University',
-    experience: '2 years at ABC Corp as a Software Developer',
-    certification: 'AWS Certified Developer – Associate',
-  });
+  const [formData, setFormData] = useState(null);
+  const [candidateId, setCandidateId] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/candidates')
+      .then(res => res.json())
+      .then(data => {
+        const candidate = data.find(user => user.role?.toLowerCase() === 'candidate');
+        if (candidate) {
+          setCandidateId(candidate._id);  // store MongoDB _id
+          setFormData({
+            name: candidate.name || '',
+            email: candidate.email || '',
+            resume: candidate.resume_link || '',
+            skills: candidate.skills || '',
+            education: candidate.education || '',
+            experience: candidate.experience || '',
+            certification: candidate.certification || '',
+          });
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching candidate:', err);
+        setLoading(false);
+      });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const toggleEdit = () => {
-    setIsEditing((prev) => !prev);
+  const toggleEdit = async () => {
+    if (isEditing && candidateId) {
+      try {
+        const updatedData = {
+          name: formData.name,
+          email: formData.email,
+          resume: formData.resume,
+          skills: formData.skills,
+          education: formData.education,
+          experience: formData.experience,
+          certification: formData.certification,
+        };
+
+        const response = await fetch(`http://127.0.0.1:5000/candidates/${candidateId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedData),
+        });
+
+        const result = await response.json();
+        console.log('✅ Candidate updated:', result);
+      } catch (err) {
+        console.error('❌ Update failed:', err);
+      }
+    }
+
+    setIsEditing(prev => !prev);
   };
+
+  if (loading) return <p style={{ padding: '20px' }}>Loading candidate profile...</p>;
+
+  if (!formData) return <p style={{ padding: '20px' }}>No candidate data found.</p>;
 
   return (
     <div className="profile-container">
@@ -52,7 +102,7 @@ const Profile = () => {
                   value={value}
                   onChange={handleChange}
                   className="profile-textarea"
-                  rows={key === 'skills' ? 2 : 3}
+                  rows={key === 'skills' || key === 'education' ? 2 : 3}
                 />
               )
             ) : (
@@ -65,4 +115,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default CandidateProfile;

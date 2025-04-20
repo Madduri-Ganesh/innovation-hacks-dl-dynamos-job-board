@@ -1,9 +1,11 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from bson.objectid import ObjectId
 
 app = Flask(__name__)
+CORS(app)
 
 uri = "mongodb+srv://mganesh2k:nvbXzxHGZevlXp78@ai-devhacks.0oywds7.mongodb.net/?retryWrites=true&w=majority&appName=AI-DevHacks"
 
@@ -48,12 +50,16 @@ def get_candidate(id):
 # Update candidate
 @app.route('/candidates/<id>', methods=['PUT'])
 def update_candidate(id):
-    data = request.json
-    result = collection.update_one({'_id': ObjectId(id)}, {'$set': data})
-    if result.matched_count:
-        return jsonify({'message': 'Candidate updated'})
-    else:
-        return jsonify({'error': 'Candidate not found'}), 404
+    try:
+        data = request.json
+        result = collection.update_one({'_id': id}, {'$set': data})
+        if result.matched_count:
+            return jsonify({'message': 'Candidate updated'})
+        else:
+            return jsonify({'error': 'Candidate not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
 
 # Delete candidate
 @app.route('/candidates/<id>', methods=['DELETE'])
