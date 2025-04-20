@@ -1,7 +1,8 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from '../Components/Navbar';
-import Profile from './Candidate/Profile';
-import Jobs from './Candidate/Jobs';
+import { Routes, Route, Navigate } from "react-router-dom";
+import Navbar from "../Components/Navbar";
+import Profile from "./Candidate/Profile";
+import MyJobs from "./Candidate/MyJobs";
+import CompanyDashboard from "./Candidate/CompanyDashboard";
 
 const Candidate = () => {
   return (
@@ -10,7 +11,8 @@ const Candidate = () => {
       <Routes>
         <Route path="/" element={<Navigate to="profile" />} />
         <Route path="profile" element={<Profile />} />
-        <Route path="jobs" element={<Jobs />} />
+        <Route path="jobs" element={<MyJobs />} />
+        <Route path="company/:companyName" element={<CompanyDashboard />} />
       </Routes>
     </>
   );
