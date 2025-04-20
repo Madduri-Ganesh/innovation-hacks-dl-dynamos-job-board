@@ -1,4 +1,34 @@
 export const final_email_data = {
+    "stratosedge-technologies": {
+        "companyName": "StratosEdge Technologies",
+        "updates": [
+            {
+                "date": "20 Apr 2025 03:15:18 -0700",
+                "status": "Update on your application"
+            },
+            {
+                "date": "20 Apr 2025 03:14:35 -0700",
+                "status": "Application confirmation"
+            }
+        ]
+    },
+    "veritas-dynamics": {
+        "companyName": "Veritas Dynamics",
+        "updates": [
+            {
+                "date": "20 Apr 2025 03:13:12 -0700",
+                "status": "Update on your application status"
+            },
+            {
+                "date": "20 Apr 2025 03:12:30 -0700",
+                "status": "Screening exam instructions"
+            },
+            {
+                "date": "20 Apr 2025 03:11:05 -0700",
+                "status": "Application received"
+            }
+        ]
+    },
     "aventra-labs": {
         "companyName": "Aventra Labs",
         "updates": [

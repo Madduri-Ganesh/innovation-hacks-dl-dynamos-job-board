@@ -3,10 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { final_email_data } from "../../data/final_email_data";
 import "./MyJobs.css"; // Import your CSS file
 
-const slugify = (text) => {
-  return text.toLowerCase().replace(/\s+/g, "-");
-};
-
 //New helper function to decide the color class based on status
 const getStatusColorClass = (status) => {
   const lower = status.toLowerCase();
@@ -14,7 +10,8 @@ const getStatusColorClass = (status) => {
   if (
     lower.includes("not selected") ||
     lower.includes("not proceeding") ||
-    lower.includes("rejected")
+    lower.includes("rejected") ||
+    (lower.includes("application") && lower.includes("update"))
   )
     return "status-rejected";
   if (
@@ -49,17 +46,17 @@ const MyJobsPage = () => {
       <div className="jobs-list">
         {Object.keys(jobs).map((slug) => {
           const { companyName, updates } = jobs[slug];
-          // ✅ Sort updates by date (most recent last)
+          //Sort updates by date (most recent last)
           const sortedUpdates = updates
             .slice()
             .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-          // ✅ Now pick the last item
+          //Now pick the last item
           const latest = sortedUpdates[sortedUpdates.length - 1];
           return (
             <div key={slug} className="job-card">
               <h2>{companyName}</h2>
-              {/* ⭐️ Apply color class dynamically */}
+              {/*Apply color class dynamically */}
               <p className={`job-status ${getStatusColorClass(latest.status)}`}>
                 Latest Status: {latest.status}
               </p>

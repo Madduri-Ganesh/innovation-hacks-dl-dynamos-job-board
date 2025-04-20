@@ -38,7 +38,8 @@ const CompanyDashboard = () => {
     if (
       lower.includes("not selected") ||
       lower.includes("rejected") ||
-      lower.includes("not proceeding")
+      lower.includes("not proceeding") ||
+      (lower.includes("application") && lower.includes("update"))
     )
       return "red";
     if (lower.includes("interview")) return "blue";
