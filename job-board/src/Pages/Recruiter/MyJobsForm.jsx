@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import './MyJobsForm.css';
 
-const MyJobsForm = ({ setShowForm }) => {
+const MyJobsForm = ({ setShowForm, recruiterId }) => {
   const [formData, setFormData] = useState({
     companyName: '',
     jobPosting: '',
     jobDescription: '',
-    experienceLevel: '',
+    hiring_period: '',
     date: '',
     skillsRequired: '',
+    jobState: 'Active'
   });
 
   const handleChange = (e) => {
@@ -16,11 +17,42 @@ const MyJobsForm = ({ setShowForm }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log('Job Submitted:', formData);
+  //   setShowForm(false); // Close the popup
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Job Submitted:', formData);
-    setShowForm(false); // Close the popup
+
+    const jobData = {
+      ...formData,
+      recruiterId: recruiterId,  // <-- attach the logged-in recruiter's ID here
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/add_job', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(jobData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        console.log('✅ Job added:', result);
+        alert('Job successfully submitted!');
+        setShowForm(false);
+      } else {
+        console.error('❌ Failed:', result.error);
+      }
+    } catch (err) {
+      console.error('Error submitting job:', err);
+    }
   };
+  
 
   return (
     <div className="modal-overlay">
@@ -53,11 +85,11 @@ const MyJobsForm = ({ setShowForm }) => {
             required
           />
 
-          <label>Experience Level:</label>
+          <label>Hiring period:</label>
           <input
             type="text"
-            name="experienceLevel"
-            value={formData.experienceLevel}
+            name="hiring_period"
+            value={formData.hiring_period}
             onChange={handleChange}
           />
 
