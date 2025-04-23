@@ -5,19 +5,18 @@ from flask_cors import CORS
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
 import cohere
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-load_dotenv()
-COHERE_API_KEY = 'ZMdG2s96ZPww62iO7GPOsgpEQxFax101dA0pBT45'
+load_dotenv(dotenv_path='../.env.local')
+COHERE_API_KEY = os.getenv('COHERE_API_KEY')
 
 co = cohere.Client(COHERE_API_KEY)
 
-uri = "mongodb+srv://mganesh2k:nvbXzxHGZevlXp78@ai-devhacks.0oywds7.mongodb.net/?retryWrites=true&w=majority&appName=AI-DevHacks"
-
 # Create a new client and connect to the server
-client = MongoClient(uri, server_api=ServerApi('1'))
+client = MongoClient(os.environ['MONGO_URI'], server_api=ServerApi('1'))
 db = client['customer_data']
 collection = db['customer_data']
 collection_job = db['job_details']
@@ -205,8 +204,6 @@ def delete_job(id):
         return jsonify({'message': 'Candidate deleted'})
     else:
         return jsonify({'error': 'Candidate not found'}), 404
-    
-    
     
 
 if __name__ == '__main__':

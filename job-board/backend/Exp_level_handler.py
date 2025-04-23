@@ -3,8 +3,8 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import cohere
 
-load_dotenv()
-COHERE_API_KEY = 'ZMdG2s96ZPww62iO7GPOsgpEQxFax101dA0pBT45'
+load_dotenv(dotenv_path='../.env.local')
+COHERE_API_KEY = os.getenv('COHERE_API_KEY')
 
 co = cohere.Client(COHERE_API_KEY)
 app = Flask(__name__)
