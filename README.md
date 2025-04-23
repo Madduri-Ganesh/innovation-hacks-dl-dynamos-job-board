@@ -1,3 +1,5 @@
+# 🚀🥉 Won 3rd Place at InnovationHacks 2025 (Qruil: Job Board Features track) 🏆🥉
+
 # JobPulse
 
 JobPulse is a job and internship portal tailored to make recruitment easier for both students and recruiters. The idea came from the real-world difficulties students face while navigating overwhelming job portals, understanding timelines, and finding opportunities that align with their skill sets and schedules.
